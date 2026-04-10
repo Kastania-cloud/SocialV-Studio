@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dpa Video Studio — Journalistische Kurzvideos</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #1a7f4b;
+    --green-light: #e8f5ee;
+    --green-mid: #0f6e56;
+    --green-dark: #155f39;
+    --text: #1a1a1a;
+    --text-muted: #6b7280;
+    --text-hint: #9ca3af;
+    --border: rgba(0,0,0,0.1);
+    --border-strong: rgba(0,0,0,0.18);
+    --surface: #ffffff;
+    --bg: #f7f7f5;
+    --radius: 8px;
+    --radius-lg: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    max-width: 960px; margin: 0 auto;
+    padding: 0 2rem;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .logo-box {
+    width: 38px; height: 38px;
+    background: var(--green);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; color: #fff; letter-spacing: 0.3px;
+  }
+  .logo-info { display: flex; flex-direction: column; }
+  .logo-name { font-size: 15px; font-weight: 500; color: var(--text); line-height: 1.2; }
+  .logo-tagline { font-size: 10px; color: var(--text-muted); letter-spacing: 0.6px; text-transform: uppercase; }
+  .header-badge {
+    font-size: 10px; font-weight: 500;
+    background: var(--green-light); color: var(--green-mid);
+    padding: 3px 10px; border-radius: 20px; letter-spacing: 0.4px;
+    border: 1px solid rgba(26,127,75,0.2);
+  }
+
+  /* ── API KEY BANNER ── */
+  .api-banner {
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+    padding: 10px 2rem;
+    text-align: center;
+  }
+  .api-banner-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; align-items: center; gap: 12px; justify-content: center;
+    flex-wrap: wrap;
+  }
+  .api-banner p { font-size: 13px; color: #92400e; }
+  .api-key-row { display: flex; gap: 8px; align-items: center; }
+  .api-key-row input {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px; padding: 6px 10px;
+    border: 1px solid #fbbf24; border-radius: 6px;
+    background: #fff; color: var(--text);
+    width: 260px; outline: none;
+  }
+  .api-key-row input:focus { border-color: var(--green); }
+  .btn-save-key {
+    padding: 6px 14px; border-radius: 6px;
+    background: var(--green); color: #fff;
+    border: none; font-size: 12px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+  }
+  .btn-save-key:hover { background: var(--green-dark); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
+
+  .page-title { font-size: 22px; font-weight: 500; margin-bottom: 0.3rem; }
+  .page-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 2.5rem; }
+
+  /* ── PROGRESS STEPS ── */
+  .steps-nav {
+    display: flex; gap: 0; margin-bottom: 2.5rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); overflow: hidden;
+    box-shadow: var(--shadow);
+  }
+  .step-nav-item {
+    flex: 1; padding: 14px 12px; text-align: center;
+    border-right: 1px solid var(--border); cursor: pointer;
+    transition: background 0.15s;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+  }
+  .step-nav-item:last-child { border-right: none; }
+  .step-nav-item.active { background: var(--green-light); }
+  .step-nav-item.done { background: #f0faf5; }
+  .step-nav-num {
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--border); color: var(--text-muted);
+    font-size: 10px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-nav-item.active .step-nav-num { background: var(--green); color: #fff; }
+  .step-nav-item.done .step-nav-num { background: var(--green-mid); color: #fff; }
+  .step-nav-label { font-size: 11px; color: var(--text-muted); font-weight: 400; }
+  .step-nav-item.active .step-nav-label { color: var(--green); font-weight: 500; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--green);
+    margin-bottom: 0.6rem;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .card-header { margin-bottom: 1rem; }
+  .card-title { font-size: 15px; font-weight: 500; margin-bottom: 3px; }
+  .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+  /* ── FORM ELEMENTS ── */
+  label.field-label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--text-muted); margin-bottom: 5px; letter-spacing: 0.2px;
+  }
+  input[type="text"], textarea, select {
+    width: 100%;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px; color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 10px 13px;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    -webkit-appearance: none;
+  }
+  input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(26,127,75,0.1);
+    background: #fff;
+  }
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+  .char-count { font-size: 11px; color: var(--text-hint); text-align: right; margin-top: 4px; }
+
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+    cursor: pointer;
+  }
+
+  .field-group { margin-bottom: 1rem; }
+  .field-group:last-child { margin-bottom: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* ── UPLOAD ZONES ── */
+  .upload-zone {
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 1.5rem 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg);
+    position: relative;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--green);
+    background: #f0faf5;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-icon { margin-bottom: 8px; color: var(--text-hint); }
+  .upload-main { font-size: 13px; color: var(--text-muted); }
+  .upload-main strong { color: var(--green); font-weight: 500; }
+  .upload-hint { font-size: 11px; color: var(--text-hint); margin-top: 4px; }
+
+  /* ── FILE CHIPS ── */
+  .chips-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--green-light); border-radius: 20px;
+    padding: 4px 10px 4px 8px;
+    font-size: 12px; color: var(--green-mid);
+    border: 1px solid rgba(26,127,75,0.2);
+    max-width: 200px;
+  }
+  .chip .chip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip-thumb { width: 20px; height: 20px; border-radius: 3px; object-fit: cover; flex-shrink: 0; }
+  .chip-remove {
+    background: none; border: none; cursor: pointer;
+    color: var(--green-mid); font-size: 15px; line-height: 1;
+    padding: 0; flex-shrink: 0; opacity: 0.6;
+  }
+  .chip-remove:hover { opacity: 1; }
+
+  /* ── IMAGE PREVIEW GRID ── */
+  .preview-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px; margin-top: 12px;
+  }
+  .preview-thumb {
+    aspect-ratio: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .preview-thumb img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+  .preview-thumb .remove-thumb {
+    position: absolute; top: 3px; right: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,0,0,0.5); color: #fff;
+    border: none; cursor: pointer; font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .preview-thumb:hover .remove-thumb { opacity: 1; }
+
+  /* ── PLATFORM SELECTOR ── */
+  .platform-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .platform-btn {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+    user-select: none;
+  }
+  .platform-btn:hover { border-color: var(--green); background: #f9fdf9; }
+  .platform-btn.active {
+    border: 2px solid var(--green);
+    background: var(--green-light);
+  }
+  .p-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+  .p-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .p-spec { font-size: 10px; color: var(--text-hint); margin-top: 3px; font-family: 'IBM Plex Mono', monospace; }
+
+  /* ── STYLE SELECTOR ── */
+  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .style-chip {
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: var(--bg);
+    display: flex; align-items: flex-start; gap: 10px;
+    user-select: none;
+  }
+  .style-chip:hover { border-color: var(--green); }
+  .style-chip.active {
+    border: 2px solid var(--green);
+    background: var(--green-light);
+  }
+  .style-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 4px; flex-shrink: 0; }
+  .style-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .style-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+  /* ── GENERATE BUTTON ── */
+  .generate-wrap { margin-top: 0.5rem; }
+  .btn-generate {
+    width: 100%; padding: 14px;
+    background: var(--green); color: #fff;
+    border: none; border-radius: var(--radius);
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: 'IBM Plex Sans', sans-serif;
+    transition: background 0.15s, transform 0.1s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    letter-spacing: 0.1px;
+  }
+  .btn-generate:hover:not(:disabled) { background: var(--green-dark); }
+  .btn-generate:active:not(:disabled) { transform: scale(0.99); }
+  .btn-generate:disabled { background: #9ca3af; cursor: not-allowed; }
+
+  /* ── PROGRESS ── */
+  .progress-block { margin-top: 1rem; display: none; }
+  .progress-track {
+    height: 3px; background: var(--border);
+    border-radius: 2px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--green);
+    border-radius: 2px; width: 0%;
+    transition: width 0.5s ease;
+  }
+  .progress-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; text-align: center; }
+
+  /* ── DIVIDER ── */
+  .divider { height: 1px; background: var(--border); margin: 2rem 0; }
+
+  /* ── OUTPUT SECTION ── */
+  .output-section { display: none; }
+  .output-header { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
+  .output-badge {
+    background: var(--green); color: #fff;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.3px;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .output-title { font-size: 18px; font-weight: 500; }
+
+  /* ── OVERLAY LIST ── */
+  .overlay-list { list-style: none; }
+  .overlay-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid var(--border);
+  }
+  .overlay-item:last-child { border-bottom: none; }
+  .overlay-num {
+    background: var(--green); color: #fff;
+    font-size: 10px; font-weight: 600;
+    width: 20px; height: 20px; border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .overlay-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .overlay-preview-bar {
+    margin-top: 6px; background: #111; border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 11px; font-family: 'IBM Plex Mono', monospace;
+    color: #fff; display: inline-block; max-width: 100%;
+  }
+
+  /* ── VIDEO MOCKUP ── */
+  .video-mockup-wrap {
+    display: flex; gap: 1.5rem; align-items: flex-start;
+  }
+  .video-frame {
+    flex-shrink: 0;
+    position: relative;
+  }
+  .video-frame.portrait {
+    width: 140px;
+  }
+  .video-frame.landscape {
+    width: 200px;
+  }
+  .video-screen {
+    background: #0a0a0a;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+  }
+  .video-frame.portrait .video-screen { aspect-ratio: 9/16; }
+  .video-frame.landscape .video-screen { aspect-ratio: 16/9; }
+
+  .video-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(160deg, #1a2a20, #050a07);
+  }
+  .video-uploaded-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
+  }
+  .video-overlay-text {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 8px 8px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  }
+  .video-overlay-line {
+    display: block;
+    font-size: 8px; color: #fff;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500; line-height: 1.4;
+    margin-bottom: 3px;
+    background: rgba(0,0,0,0.4); padding: 2px 4px; border-radius: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .video-logo-area {
+    position: absolute; top: 6px; right: 6px;
+    background: rgba(255,255,255,0.9); border-radius: 3px;
+    padding: 2px 5px; font-size: 7px; font-weight: 600;
+    color: #1a1a1a; letter-spacing: 0.3px;
+  }
+  .video-play {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-play-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 12px;
+    border: 1.5px solid rgba(255,255,255,0.3);
+  }
+  .video-meta { flex: 1; }
+  .video-meta-row { margin-bottom: 1rem; }
+  .vm-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: var(--green); font-weight: 600; margin-bottom: 3px; }
+  .vm-val { font-size: 13px; color: var(--text); }
+
+  /* ── SEO BLOCK ── */
+  .seo-text { font-size: 14px; color: var(--text); line-height: 1.7; }
+  .hashtag { color: var(--green); font-weight: 500; }
+
+  /* ── HOOK BLOCK ── */
+  .hook-text { font-size: 14px; color: var(--text); line-height: 1.7; }
+
+  /* ── EXPORT ROW ── */
+  .export-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 1.25rem; }
+  .btn-export {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 16px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer; font-family: inherit;
+    border: 1px solid var(--border-strong);
+    background: var(--surface); color: var(--text);
+    transition: all 0.15s;
+  }
+  .btn-export:hover { border-color: var(--green); color: var(--green); }
+  .btn-export.primary {
+    background: var(--green); color: #fff; border-color: var(--green);
+  }
+  .btn-export.primary:hover { background: var(--green-dark); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--text); color: #fff;
+    padding: 10px 18px; border-radius: var(--radius);
+    font-size: 13px; font-weight: 400;
+    opacity: 0; transform: translateY(8px);
+    transition: all 0.25s; pointer-events: none; z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── FOOTER ── */
+  .site-footer {
+    text-align: center; padding: 2rem;
+    font-size: 11px; color: var(--text-hint);
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .platform-grid { grid-template-columns: 1fr; }
+    .style-grid { grid-template-columns: 1fr; }
+    .steps-nav { display: none; }
+    .header-inner { padding: 0 1rem; }
+    .main { padding: 1.5rem 1rem 3rem; }
+    .video-mockup-wrap { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-box">dpa</div>
+      <div class="logo-info">
+        <span class="logo-name">Video Studio</span>
+        <span class="logo-tagline">Journalistische Kurzvideos</span>
+      </div>
+    </a>
+    <span class="header-badge">Beta</span>
+  </div>
+</header>
+
+<!-- API KEY BANNER -->
+<div class="api-banner" id="api-banner">
+  <div class="api-banner-inner">
+    <p>🔑 Anthropic API-Schlüssel erforderlich für die KI-Generierung:</p>
+    <div class="api-key-row">
+      <input type="password" id="api-key-input" placeholder="sk-ant-api03-…" autocomplete="off">
+      <button class="btn-save-key" onclick="saveApiKey()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+  <p class="page-title">Kurzvideo erstellen</p>
+  <p class="page-sub">Laden Sie Ihr Material hoch, definieren Sie Thema und Format — die KI generiert Overlays, Hook und SEO-Beschreibung.</p>
+
+  <!-- STEP NAV -->
+  <nav class="steps-nav">
+    <div class="step-nav-item active" id="nav-1"><div class="step-nav-num">1</div><div class="step-nav-label">Thema</div></div>
+    <div class="step-nav-item" id="nav-2"><div class="step-nav-num">2</div><div class="step-nav-label">Material</div></div>
+    <div class="step-nav-item" id="nav-3"><div class="step-nav-num">3</div><div class="step-nav-label">Plattform</div></div>
+    <div class="step-nav-item" id="nav-4"><div class="step-nav-num">4</div><div class="step-nav-label">Stil</div></div>
+    <div class="step-nav-item" id="nav-5"><div class="step-nav-num">5</div><div class="step-nav-label">Output</div></div>
+  </nav>
+
+  <!-- STEP 1: THEMA -->
+  <div class="section-label">Schritt 1 — Thema & Inhalt</div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Kernaussage der Meldung</div>
+      <div class="card-desc">Geben Sie das Thema und die wichtigsten Fakten ein. Nur dieses Informationsuniversum wird verwendet.</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="topic">Thema / Schlagzeile</label>
+      <input type="text" id="topic" placeholder="z.B. Bundestagswahl 2025 – vorläufiges Ergebnis" maxlength="120" oninput="cnt(this,'tc',120)">
+      <div class="char-count" id="tc">0 / 120</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="content">Fakten & Kontext</label>
+      <textarea id="content" placeholder="Kernaussagen, Zahlen, Kontext und Hintergründe der Meldung eingeben…" maxlength="1000" oninput="cnt(this,'cc',1000)"></textarea>
+      <div class="char-count" id="cc">0 / 1000</div>
+    </div>
+  </div>
+
+  <!-- STEP 2: MATERIAL -->
+  <div class="section-label">Schritt 2 — Material hochladen</div>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Bild- & Videomaterial</div>
+        <div class="card-desc" style="margin-bottom:12px">JPG, PNG, MP4 · max. 50 MB je Datei</div>
+        <div class="upload-zone" id="media-zone">
+          <input type="file" id="media-input" multiple accept="image/*,video/mp4" onchange="handleMedia(this)">
+          <div class="upload-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M14 5v14M9 10l5-5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <rect x="4" y="19" width="20" height="2" rx="1" fill="currentColor" opacity=".2"/>
+            </svg>
+          </div>
+          <div class="upload-main"><strong>Datei auswählen</strong> oder hierher ziehen</div>
+          <div class="upload-hint">Bis zu 6 Dateien</div>
+        </div>
+        <div class="preview-grid" id="media-previews"></div>
+      </div>
+      <div>
+        <div class="card-title" style="margin-bottom:4px">Logo <span style="font-size:10px;color:var(--text-hint);font-weight:400;margin-left:4px">optional</span></div>
+        <div class="card-desc" style="margin-bottom:12px">PNG mit Transparenz empfohlen</div>
+        <div class="upload-zone" id="logo-zone">
+          <input type="file" id="logo-input" accept="image/*" onchange="handleLogo(this)">
+          <div class="upload-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <rect x="4" y="7" width="20" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="10" cy="13" r="2.5" stroke="currentColor" stroke-width="1.2"/>
+              <path d="M4 19l6-5 5 4 3-3 6 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="upload-main"><strong>Logo hochladen</strong></div>
+          <div class="upload-hint">PNG, SVG · transparent</div>
+        </div>
+        <div id="logo-preview-wrap" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: PLATTFORM -->
+  <div class="section-label">Schritt 3 — Zielplattform</div>
+  <div class="card">
+    <div class="card-desc" style="margin-bottom:14px">Format, Seitenverhältnis und Erzähltempo werden automatisch angepasst.</div>
+    <div class="platform-grid">
+      <div class="platform-btn" id="plt-instagram" onclick="pick('platform','instagram','plt-')">
+        <span class="p-icon">📷</span>
+        <div class="p-name">Instagram</div>
+        <div class="p-spec">9:16 · Reels</div>
+      </div>
+      <div class="platform-btn" id="plt-youtube" onclick="pick('platform','youtube','plt-')">
+        <span class="p-icon">▶</span>
+        <div class="p-name">YouTube Shorts</div>
+        <div class="p-spec">9:16 · bis 60 s</div>
+      </div>
+      <div class="platform-btn" id="plt-twitter" onclick="pick('platform','twitter','plt-')">
+        <span class="p-icon">𝕏</span>
+        <div class="p-name">X / Twitter</div>
+        <div class="p-spec">16:9 · headline-driven</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 4: STIL -->
+  <div class="section-label">Schritt 4 — Visueller Stil</div>
+  <div class="card">
+    <div class="card-desc" style="margin-bottom:14px">Wählen Sie den journalistischen Charakter des Videos.</div>
+    <div class="style-grid">
+      <div class="style-chip" id="sty-neutral" onclick="pick('style','neutral','sty-')">
+        <div class="style-dot" style="background:#6b7280"></div>
+        <div>
+          <div class="style-name">Neutral</div>
+          <div class="style-desc">Sachlich, ausgewogen, klare Typografie</div>
+        </div>
+      </div>
+      <div class="style-chip" id="sty-erklaerend" onclick="pick('style','erklaerend','sty-')">
+        <div class="style-dot" style="background:#2563eb"></div>
+        <div>
+          <div class="style-name">Erklärend</div>
+          <div class="style-desc">Strukturiert, mit Kontext und Hintergründen</div>
+        </div>
+      </div>
+      <div class="style-chip" id="sty-reduziert" onclick="pick('style','reduziert','sty-')">
+        <div class="style-dot" style="background:#1a7f4b"></div>
+        <div>
+          <div class="style-name">Emotional reduziert</div>
+          <div class="style-desc">Minimalistisch, ruhig, viel Bildraum</div>
+        </div>
+      </div>
+      <div class="style-chip" id="sty-daten" onclick="pick('style','daten','sty-')">
+        <div class="style-dot" style="background:#b45309"></div>
+        <div>
+          <div class="style-name">Datenfokussiert</div>
+          <div class="style-desc">Zahlen, Grafiken und Statistiken im Vordergrund</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE -->
+  <div class="generate-wrap">
+    <button class="btn-generate" id="gen-btn" onclick="generate()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Video generieren
+    </button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-block" id="progress-block">
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+    <div class="progress-label" id="progress-label">Meldung wird analysiert…</div>
+  </div>
+
+  <!-- DIVIDER + OUTPUT -->
+  <div class="divider" id="output-divider" style="display:none"></div>
+
+  <div class="output-section" id="output-section">
+    <div class="output-header">
+      <span class="output-badge">Output</span>
+      <span class="output-title">Generierter Video-Content</span>
+    </div>
+
+    <!-- OVERLAYS -->
+    <div class="section-label">Text-Overlays</div>
+    <div class="card">
+      <div class="card-desc" style="margin-bottom:1rem">Bis zu 4 Einblendungen · max. 1 Zeile · journalistisch nüchtern</div>
+      <ul class="overlay-list" id="overlay-list"></ul>
+    </div>
+
+    <!-- VIDEO MOCKUP -->
+    <div class="section-label">Video-Vorschau</div>
+    <div class="card">
+      <div class="video-mockup-wrap" id="video-mockup-wrap"></div>
+      <div class="export-row">
+        <button class="btn-export primary" onclick="exportTxt()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 11h10M7 2v7M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Content als .txt exportieren
+        </button>
+        <button class="btn-export" onclick="copyAll()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M2 10V2h8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Alles kopieren
+        </button>
+      </div>
+    </div>
+
+    <!-- HOOK -->
+    <div class="section-label">Hook & Dramaturgie</div>
+    <div class="card">
+      <div class="hook-text" id="hook-text"></div>
+    </div>
+
+    <!-- SEO -->
+    <div class="section-label">SEO-Beschreibung</div>
+    <div class="card">
+      <div class="seo-text" id="seo-text"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  dpa Video Studio · Beta · Nur für redaktionellen Gebrauch · Generierte Inhalte vor Veröffentlichung prüfen
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let apiKey = localStorage.getItem('dpa_api_key') || '';
+let selPlatform = null;
+let selStyle = null;
+let mediaFiles = [];
+let logoFile = null;
+let lastResult = null;
+
+// ── INIT ──
+if (apiKey) {
+  document.getElementById('api-banner').style.display = 'none';
+}
+
+function saveApiKey() {
+  const v = document.getElementById('api-key-input').value.trim();
+  if (!v.startsWith('sk-ant')) { toast('Ungültiger API-Key — muss mit sk-ant beginnen'); return; }
+  apiKey = v;
+  localStorage.setItem('dpa_api_key', v);
+  document.getElementById('api-banner').style.display = 'none';
+  toast('API-Key gespeichert');
+}
+
+// ── CHAR COUNT ──
+function cnt(el, id, max) {
+  document.getElementById(id).textContent = el.value.length + ' / ' + max;
+  updateNav();
+}
+
+// ── NAV STEPS ──
+function updateNav() {
+  const topic = document.getElementById('topic').value.trim();
+  const hasMedia = mediaFiles.length > 0;
+  if (topic) markNav(1);
+  if (hasMedia) markNav(2);
+  if (selPlatform) markNav(3);
+  if (selStyle) markNav(4);
+}
+function markNav(n) {
+  const el = document.getElementById('nav-' + n);
+  if (el) { el.classList.remove('active'); el.classList.add('done'); }
+  const next = document.getElementById('nav-' + (n+1));
+  if (next && !next.classList.contains('done')) next.classList.add('active');
+}
+
+// ── PICK (platform / style) ──
+function pick(type, val, prefix) {
+  const options = {
+    platform: ['instagram','youtube','twitter'],
+    style: ['neutral','erklaerend','reduziert','daten']
+  };
+  options[type].forEach(o => {
+    const el = document.getElementById(prefix + o);
+    if (el) el.classList.remove('active');
+  });
+  document.getElementById(prefix + val).classList.add('active');
+  if (type === 'platform') { selPlatform = val; markNav(3); }
+  if (type === 'style') { selStyle = val; markNav(4); }
+}
+
+// ── MEDIA UPLOAD ──
+function handleMedia(input) {
+  const files = Array.from(input.files);
+  mediaFiles = [...mediaFiles, ...files].slice(0, 6);
+  renderPreviews();
+  markNav(2);
+}
+
+function renderPreviews() {
+  const grid = document.getElementById('media-previews');
+  grid.innerHTML = '';
+  mediaFiles.forEach((f, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'preview-thumb';
+    if (f.type.startsWith('image/')) {
+      const url = URL.createObjectURL(f);
+      wrap.innerHTML = `<img src="${url}" alt="${f.name}"><button class="remove-thumb" onclick="removeMedia(${i})">×</button>`;
+    } else {
+      wrap.innerHTML = `<div style="width:100%;height:100%;background:#111;display:flex;align-items:center;justify-content:center;font-size:20px;">▶</div><button class="remove-thumb" onclick="removeMedia(${i})">×</button>`;
+    }
+    grid.appendChild(wrap);
+  });
+}
+
+function removeMedia(i) {
+  mediaFiles.splice(i, 1);
+  renderPreviews();
+}
+
+// ── LOGO UPLOAD ──
+function handleLogo(input) {
+  logoFile = input.files[0];
+  const wrap = document.getElementById('logo-preview-wrap');
+  if (logoFile) {
+    const url = URL.createObjectURL(logoFile);
+    wrap.innerHTML = `<div style="display:flex;align-items:center;gap:8px;">
+      <img src="${url}" style="height:32px;border-radius:4px;border:1px solid var(--border);">
+      <span style="font-size:12px;color:var(--text-muted)">${logoFile.name}</span>
+      <button style="background:none;border:none;cursor:pointer;color:var(--text-hint);font-size:16px;" onclick="clearLogo()">×</button>
+    </div>`;
+  }
+}
+function clearLogo() {
+  logoFile = null;
+  document.getElementById('logo-preview-wrap').innerHTML = '';
+  document.getElementById('logo-input').value = '';
+}
+
+// ── DRAG & DROP ──
+['media-zone','logo-zone'].forEach(id => {
+  const el = document.getElementById(id);
+  el.addEventListener('dragover', e => { e.preventDefault(); el.classList.add('drag-over'); });
+  el.addEventListener('dragleave', () => el.classList.remove('drag-over'));
+  el.addEventListener('drop', e => {
+    e.preventDefault(); el.classList.remove('drag-over');
+    const files = Array.from(e.dataTransfer.files);
+    if (id === 'media-zone') { mediaFiles = [...mediaFiles, ...files].slice(0,6); renderPreviews(); markNav(2); }
+    else { logoFile = files[0]; handleLogoFile(logoFile); }
+  });
+});
+
+// ── GENERATE ──
+async function generate() {
+  const topic = document.getElementById('topic').value.trim();
+  const content = document.getElementById('content').value.trim();
+
+  if (!topic) { toast('Bitte ein Thema eingeben'); return; }
+  if (!selPlatform) { toast('Bitte eine Zielplattform wählen'); return; }
+  if (!selStyle) { toast('Bitte einen Stil wählen'); return; }
+  if (!apiKey) { toast('Bitte zuerst den API-Key eingeben'); document.getElementById('api-banner').style.display = 'block'; return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true; btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" class="spin" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="20 17"/></svg> Wird generiert…';
+
+  const pb = document.getElementById('progress-block');
+  pb.style.display = 'block';
+  document.getElementById('output-section').style.display = 'none';
+  document.getElementById('output-divider').style.display = 'none';
+
+  const pLabels = { instagram: 'Instagram Reels (9:16, vertikal)', youtube: 'YouTube Shorts (9:16, vertikal, leicht erklärend)', twitter: 'X / Twitter (16:9, kompakt, headline-getrieben)' };
+  const sLabels = { neutral: 'Neutral / sachlich', erklaerend: 'Erklärend mit Kontext', reduziert: 'Emotional reduziert / minimalistisch', daten: 'Datenfokussiert mit Zahlen und Grafiken' };
+
+  const steps = [
+    [12, 'Meldung analysieren…'],
+    [30, 'Fakten und Kernaussagen extrahieren…'],
+    [50, 'Overlays formulieren…'],
+    [68, 'Hook und Dramaturgie entwickeln…'],
+    [85, 'SEO-Beschreibung erstellen…'],
+    [96, 'Output zusammenstellen…'],
+  ];
+  let si = 0;
+  const iv = setInterval(() => {
+    if (si < steps.length) {
+      setProgress(steps[si][0], steps[si][1]); si++;
+    }
+  }, 1100);
+
+  const prompt = `Du bist ein erfahrener Journalist und Videoproducer für journalistische Social-Media-Kurzvideos im Stil der dpa.
+
+THEMA: ${topic}
+INHALT / FAKTEN: ${content || '(Nur Schlagwort angegeben — nutze allgemeines Faktenwissen zu diesem Thema)'}
+ZIELPLATTFORM: ${pLabels[selPlatform]}
+VISUELLER STIL: ${sLabels[selStyle]}
+BILDMATERIAL VORHANDEN: ${mediaFiles.length > 0 ? `Ja (${mediaFiles.length} Datei(en): ${mediaFiles.map(f=>f.name).join(', ')})` : 'Nein'}
+LOGO VORHANDEN: ${logoFile ? 'Ja' : 'Nein'}
+
+Erstelle den folgenden JSON-Output. Nur JSON, kein Text davor oder danach, keine Markdown-Backticks.
+
+{
+  "overlays": [
+    "Overlay 1 (max. 1 kurze Zeile)",
+    "Overlay 2",
+    "Overlay 3",
+    "Overlay 4"
+  ],
+  "hook_analyse": "2–3 Sätze: journalistischer Hook der ersten Sequenz, visuelle und textliche Stärke, Dramaturgie des Gesamtvideos",
+  "seo_beschreibung": "Vollständige SEO-Beschreibung mit informativer Einleitung und relevanten Keywords (2–4 Sätze)",
+  "hashtags": ["#Hashtag1", "#Hashtag2", "#Hashtag3", "#Hashtag4", "#Hashtag5"],
+  "cta": "Sachlicher Call-to-Action (ein Satz)",
+  "format": "${pLabels[selPlatform]}",
+  "dauer": "Geschätzte Videodauer (z.B. 20–30 Sekunden)",
+  "stil": "${sLabels[selStyle]}"
+}
+
+Verbindliche Regeln für Overlays:
+- Maximal 4, jeder maximal 1 Zeile
+- Klar, präzise, journalistisch nüchtern
+- Keine Fragen, keine Ausrufezeichen, keine Emojis
+- Faktenbasiert, direkt, informativ
+- Erstes Overlay = Hook / stärkste Aussage`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    clearInterval(iv);
+
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error?.message || 'API-Fehler ' + resp.status);
+    }
+
+    const data = await resp.json();
+    setProgress(100, 'Fertig.');
+
+    let raw = (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+    raw = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(raw);
+    lastResult = result;
+
+    renderOutput(result);
+    markNav(5);
+    document.getElementById('output-section').style.display = 'block';
+    document.getElementById('output-divider').style.display = 'block';
+    setTimeout(() => document.getElementById('output-divider').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+
+  } catch(e) {
+    clearInterval(iv);
+    setProgress(0, '');
+    pb.style.display = 'none';
+    toast('Fehler: ' + e.message);
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M6 8l2 2 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Erneut generieren';
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = label;
+}
+
+// ── RENDER OUTPUT ──
+function renderOutput(r) {
+  // Overlays
+  const ul = document.getElementById('overlay-list');
+  ul.innerHTML = '';
+  (r.overlays || []).forEach((t, i) => {
+    const li = document.createElement('li');
+    li.className = 'overlay-item';
+    li.innerHTML = `
+      <div class="overlay-num">${i+1}</div>
+      <div>
+        <div class="overlay-text">${t}</div>
+        <span class="overlay-preview-bar">${t}</span>
+      </div>`;
+    ul.appendChild(li);
+  });
+
+  // Video mockup
+  const isPortrait = selPlatform !== 'twitter';
+  const wrap = document.getElementById('video-mockup-wrap');
+  const firstImg = mediaFiles.find(f => f.type.startsWith('image/'));
+  const imgSrc = firstImg ? URL.createObjectURL(firstImg) : null;
+
+  const overlayLines = (r.overlays || []).slice(0, 3).map(t =>
+    `<span class="video-overlay-line">${t}</span>`
+  ).join('');
+
+  const logoHtml = logoFile
+    ? `<div class="video-logo-area">LOGO</div>`
+    : '';
+
+  wrap.innerHTML = `
+    <div class="video-frame ${isPortrait ? 'portrait' : 'landscape'}">
+      <div class="video-screen">
+        <div class="video-bg"></div>
+        ${imgSrc ? `<img class="video-uploaded-img" src="${imgSrc}" alt="Vorschau">` : ''}
+        ${logoHtml}
+        <div class="video-play"><div class="video-play-btn">▶</div></div>
+        <div class="video-overlay-text">${overlayLines}</div>
+      </div>
+    </div>
+    <div class="video-meta">
+      <div class="video-meta-row">
+        <div class="vm-label">Plattform</div>
+        <div class="vm-val">${r.format || ''}</div>
+      </div>
+      <div class="video-meta-row">
+        <div class="vm-label">Stil</div>
+        <div class="vm-val">${r.stil || ''}</div>
+      </div>
+      <div class="video-meta-row">
+        <div class="vm-label">Dauer</div>
+        <div class="vm-val">${r.dauer || '20–30 Sekunden'}</div>
+      </div>
+      <div class="video-meta-row">
+        <div class="vm-label">Overlays</div>
+        <div class="vm-val">${(r.overlays||[]).length} Einblendungen</div>
+      </div>
+      <div class="video-meta-row">
+        <div class="vm-label">Bildmaterial</div>
+        <div class="vm-val">${mediaFiles.length > 0 ? mediaFiles.length + ' Datei(en) hochgeladen' : 'Kein Material'}</div>
+      </div>
+    </div>`;
+
+  // Hook
+  document.getElementById('hook-text').textContent = r.hook_analyse || '';
+
+  // SEO
+  const tags = (r.hashtags || []).map(h => `<span class="hashtag">${h}</span>`).join(' ');
+  const cta = r.cta ? `<br><br><em style="color:var(--text-muted)">${r.cta}</em>` : '';
+  document.getElementById('seo-text').innerHTML = (r.seo_beschreibung || '') + cta + '<br><br>' + tags;
+}
+
+// ── EXPORT ──
+function exportTxt() {
+  if (!lastResult) return;
+  const r = lastResult;
+  const topic = document.getElementById('topic').value.trim();
+  const lines = [
+    'dpa Video Studio — Export',
+    '='.repeat(40),
+    '',
+    'THEMA: ' + topic,
+    'PLATTFORM: ' + (r.format || ''),
+    'STIL: ' + (r.stil || ''),
+    'DAUER: ' + (r.dauer || ''),
+    '',
+    'TEXT-OVERLAYS',
+    '-'.repeat(30),
+    ...(r.overlays || []).map((t, i) => `${i+1}. ${t}`),
+    '',
+    'HOOK & DRAMATURGIE',
+    '-'.repeat(30),
+    r.hook_analyse || '',
+    '',
+    'SEO-BESCHREIBUNG',
+    '-'.repeat(30),
+    r.seo_beschreibung || '',
+    '',
+    'HASHTAGS',
+    (r.hashtags || []).join(' '),
+    '',
+    'CALL TO ACTION',
+    r.cta || '',
+    '',
+    '='.repeat(40),
+    'Generiert mit dpa Video Studio · ' + new Date().toLocaleDateString('de-DE')
+  ];
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'dpa-video-' + Date.now() + '.txt'; a.click();
+  toast('Export erfolgreich');
+}
+
+function copyAll() {
+  if (!lastResult) return;
+  const r = lastResult;
+  const text = [
+    ...(r.overlays || []).map((t,i) => `${i+1}. ${t}`),
+    '',
+    r.hook_analyse || '',
+    '',
+    r.seo_beschreibung || '',
+    '',
+    (r.hashtags || []).join(' ')
+  ].join('\n');
+  navigator.clipboard.writeText(text).then(() => toast('Kopiert'));
+}
+
+// ── TOAST ──
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2800);
+}
+
+// ── SPIN ANIMATION ──
+const style = document.createElement('style');
+style.textContent = `
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin { animation: spin 1s linear infinite; transform-origin: center; }
+`;
+document.head.appendChild(style);
+</script>
+</body>
+</html>
